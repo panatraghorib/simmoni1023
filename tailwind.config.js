@@ -1,6 +1,7 @@
 /* eslint-env node */
 
 const plugin = require("tailwindcss/plugin");
+import forms from "@tailwindcss/forms";
 
 module.exports = {
     content: [
@@ -48,7 +49,8 @@ module.exports = {
         },
     },
     plugins: [
-        require("@tailwindcss/forms"),
+        // require("@tailwindcss/forms"),
+        forms,
         plugin(function ({ matchUtilities, theme }) {
             matchUtilities(
                 {

@@ -36,9 +36,12 @@ const wrapperClass = computed(() => {
 
 <template>
     <div class="mb-6 last:mb-0">
-        <label v-if="label" :for="labelFor" class="block font-bold mb-2">{{
-            label
-        }}</label>
+        <label
+            v-if="label"
+            :for="labelFor"
+            class="block font-medium text-sm mb-2"
+            >{{ label }}</label
+        >
         <div :class="wrapperClass">
             <slot />
         </div>

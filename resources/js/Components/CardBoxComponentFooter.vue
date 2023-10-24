@@ -1,5 +1,5 @@
 <template>
-  <footer class="p-6">
-    <slot />
-  </footer>
+    <footer class="py-3 px-6">
+        <slot />
+    </footer>
 </template>
