@@ -50,6 +50,7 @@ module.exports = {
     },
     plugins: [
         // require("@tailwindcss/forms"),
+        "./node_modules/@protonemedia/inertiajs-tables-laravel-query-builder/**/*.{js,vue}",
         forms,
         plugin(function ({ matchUtilities, theme }) {
             matchUtilities(
