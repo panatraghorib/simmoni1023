@@ -10,7 +10,7 @@ import {
     mdiTelevisionGuide,
     mdiResponsive,
     mdiPalette,
-    mdiReact,
+    mdiAccountGroup,
 } from "@mdi/js";
 
 export default [
@@ -18,6 +18,11 @@ export default [
         route: "dashboard",
         icon: mdiMonitor,
         label: "Dashboard",
+    },
+    {
+        route: "user.index",
+        icon: mdiAccountGroup,
+        label: "Users",
     },
     {
         to: "/tables",
