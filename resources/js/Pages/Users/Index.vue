@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 import CardBox from "@/Components/CardBox.vue";
 import {
     Table,
@@ -192,14 +192,14 @@ const modalOneActive = ref(false);
 
                     <template #cell(actions)="{ item: user }">
                         <BaseButton
-                            route-name="user.edit"
-                            :with-param="`${user.id}`"
+                            :inertia-link="`/users/${user.id}/edit`"
                             color="bg-blue-700"
                             label="Edit"
                             class="text-white"
                             :icon="mdiPlusCircleMultipleOutline"
                             small
                         />
+
                         <a
                             :href="`/users/${user.id}/edit`"
                             class="p-2 bg-red-600 text-white rounded"

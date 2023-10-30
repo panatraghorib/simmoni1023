@@ -45,7 +45,7 @@ const form = useForm({
 });
 
 const onRoleChange = (role) => {
-    if (form.roles && form.roles.id !== 3) {
+    if (form.roles && form.roles.label !== 'Organisasi/Cabor') {
         form.cabor = "";
     }
 };
@@ -152,8 +152,8 @@ function submit() {
                     <FormControl
                         v-model="form.gender"
                         :options="[
-                            { id: 1, label: 'Laki-Laki' },
-                            { id: 2, label: 'Perempuan' },
+                            { id: 'Laki-Laki', label: 'Laki-Laki' },
+                            { id: 'Perempuan', label: 'Perempuan' },
                         ]"
                         name="Jenis Kelamin"
                         :error="form.errors.gender"
@@ -181,7 +181,7 @@ function submit() {
                         @change="onRoleChange"
                     />
                 </FormField>
-                <div v-if="form.roles && form.roles.id == 3">
+                <div v-if="form.roles && form.roles.label == 'Organisasi/Cabor'">
                     <FormField label="Organisasi/Cabor">
                         <FormControl
                             v-model="form.cabor"

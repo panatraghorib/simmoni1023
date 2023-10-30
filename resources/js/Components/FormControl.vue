@@ -125,6 +125,8 @@ if (props.ctrlKFocus) {
         mainStore.isFieldFocusRegistered = false;
     });
 }
+
+const defaultSelected = ref(null);
 </script>
 
 <template>
@@ -136,11 +138,13 @@ if (props.ctrlKFocus) {
             :name="name"
             :class="inputElClass"
         >
-            <option disabled selected value="">-Pilih {{ name }}-</option>
+            <option disabled selected :value="defaultSelected">
+                -Pilih {{ name }}-
+            </option>
             <option
                 v-for="option in options"
                 :key="option.id ?? option"
-                :value="option"
+                :value="option.id"
             >
                 {{ option.label ?? option }}
             </option>

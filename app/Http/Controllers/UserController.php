@@ -2,19 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserAddRequest;
+use App\Http\Requests\UserUpdateRequest;
+use App\Models\Cabor;
 use App\Models\Role;
 use App\Models\User;
-use Inertia\Inertia;
-use App\Models\Cabor;
-use Inertia\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\UserAddRequest;
-use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Support\Facades\URL;
+use Inertia\Inertia;
+use Inertia\Response;
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends Controller
 {
@@ -43,6 +45,7 @@ class UserController extends Controller
             ->paginate($numberPaginate)
             ->withQueryString();
 
+
         return Inertia::render('Users/Index', [
             'users' => $users,
 
@@ -53,7 +56,7 @@ class UserController extends Controller
                     ->defaultSort('name')
                     ->column(key: 'name', searchable: true, sortable: true, canBeHidden: true, label: 'nama')
                     ->column(key: 'email', searchable: true, sortable: true)
-                    ->column(key: 'email_verified_at',  label: 'Bergabung')
+                    ->column(key: 'email_verified_at', label: 'Bergabung')
                     ->column(label: 'Actions');
             }
         );
@@ -72,7 +75,7 @@ class UserController extends Controller
             ]),
             'cabor' => Cabor::all()->map(fn ($cabor) => [
                 'id' => $cabor->id,
-                'label' => $cabor->cabor_name
+                'label' => $cabor->cabor_name,
             ]),
         ]);
     }
@@ -95,7 +98,7 @@ class UserController extends Controller
             'gender' => $request->gender['label'],
             'organization_id' => !is_null($request->cabor) ? $request->cabor['id'] : 0,
             'avatar' => $request->file('avatar') ? $request->file('avatar')->store('users') : null,
-            'created_by' => auth()->user()
+            'created_by' => auth()->user(),
         ]);
 
         $roles = $request->roles['label'] ?? [];
@@ -112,8 +115,8 @@ class UserController extends Controller
         DB::rollBack();
 
         return redirect()->route('user.index')->with('message', [
-            'type'   => 'success',
-            'text'   => 'User berhasil ditambahkan!'
+            'type' => 'success',
+            'text' => 'User berhasil ditambahkan!',
         ]);
     }
 
@@ -128,19 +131,32 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
 
         $roles = Role::whereNot('id', 1)->orderBy('id')->get(); // bisa di remove kalau diperlukan
         return Inertia::render('Users/Edit', [
-            'user' => User::findOrFail($id),
+            'user' => [
+                'id' => $user->id,
+                'email' => $user->email,
+                'username' => $user->username,
+                'name' => $user->name,
+                'mobile' => $user->mobile,
+                'date_of_birth' => $user->date_of_birth,
+                'gender' => $user->gender,
+                'organization_id' => $user->organization_id,
+                // 'role' => $user->roles()->get(['id','name']),
+                'roles' => $user->roles()->first()->id ?? null,
+                'avatar' => $user->avatar ? URL::route('image', ['path' => $user->avatar, 'w' => 60, 'h' => 60, 'fit' => 'crop']) : null,
+                'created_by' => $user->created_by,
+            ],
             'roles' => $roles->map(fn ($role) => [
                 'id' => $role->id,
                 'label' => $role->name,
             ]),
             'cabor' => Cabor::all()->map(fn ($cabor) => [
                 'id' => $cabor->id,
-                'label' => $cabor->cabor_name
+                'label' => $cabor->cabor_name,
             ]),
         ]);
     }
@@ -148,9 +164,33 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserUpdateRequest $request, User $user)
     {
-        //
+        // dump($request->all());
+        // exit;
+
+        $user->update($request->only(
+            'email',
+            'username',
+            'name',
+            'mobile',
+            // 'dateOfBirth',
+            'cabor',
+        ));
+
+        if (request()->file('avatar')) {
+            $user->update(['avatar' => $request->file('avatar')->store('users')]);
+        }
+
+        if ($request->get('password')) {
+            $user->update(['password' => $request->get('password')]);
+        }
+
+        // return redirect()->back()->with('success', 'User updated.');
+        return redirect()->route('user.index')->with('message', [
+            'type' => 'success',
+            'text' => 'User berhasil diperbarui!',
+        ]);
     }
 
     /**

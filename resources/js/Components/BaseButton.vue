@@ -21,6 +21,10 @@ const props = defineProps({
         type: String,
         default: null,
     },
+    inertiaLink: {
+        type: String,
+        default: null,
+    },
     target: {
         type: String,
         default: null,
@@ -57,8 +61,12 @@ const is = computed(() => {
         return Link;
     }
 
+    if (props.inertiaLink) {
+        return Link;
+    }
+
     if (props.href) {
-        return "a";
+        return 'a';
     }
 
     return "button";
@@ -117,7 +125,7 @@ const componentClass = computed(() => {
     <component
         :is="is"
         :class="componentClass"
-        :href="routeName ? route(routeName) : href"
+        :href="routeName ? route(routeName) : inertiaLink ? inertiaLink : href"
         :type="computedType"
         :target="target"
         :disabled="disabled"
