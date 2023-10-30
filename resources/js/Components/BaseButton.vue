@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from "vue";
-// import { RouterLink } from "vue-router";
 import { Link } from "@inertiajs/vue3";
 import { getButtonColor } from "@/colors.js";
 import BaseIcon from "@/Components/BaseIcon.vue";

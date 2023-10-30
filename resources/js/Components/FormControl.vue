@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from "vue";
-import { useMainStore } from "@/stores/main";
-import FormControlIcon from "@/components/FormControlIcon.vue";
+import { useMainStore } from "@/Stores/main";
+import FormControlIcon from "@/Components/FormControlIcon.vue";
 
 const props = defineProps({
     name: {
@@ -48,6 +48,7 @@ const props = defineProps({
     borderless: Boolean,
     transparent: Boolean,
     ctrlKFocus: Boolean,
+    error: String,
 });
 
 const emit = defineEmits(["update:modelValue", "setRef"]);
@@ -61,11 +62,12 @@ const computedValue = computed({
 
 const inputElClass = computed(() => {
     const base = [
-        " max-w-full focus:ring-1 focus:outline-none border-gray-400 rounded w-full",
+        "max-w-full focus:ring-1 focus:outline-none border-gray-400 rounded w-full",
         "dark:placeholder-gray-400 focus:ring-emerald-200",
         computedType.value === "textarea" ? "h-24" : "h-10 text-sm",
         props.borderless ? "border-0" : "border",
         props.transparent ? "bg-transparent" : "bg-white dark:bg-slate-800",
+        props.error ? "border border-red-700" : "border",
     ];
 
     if (props.icon) {
@@ -134,6 +136,7 @@ if (props.ctrlKFocus) {
             :name="name"
             :class="inputElClass"
         >
+            <option disabled selected value="">-Pilih {{ name }}-</option>
             <option
                 v-for="option in options"
                 :key="option.id ?? option"
@@ -167,5 +170,8 @@ if (props.ctrlKFocus) {
             :class="inputElClass"
         />
         <FormControlIcon v-if="icon" :icon="icon" :h="controlIconH" />
+        <div v-if="error" class="form-error">
+            <span class="text-xs italic text-red-500"> {{ error }}</span>
+        </div>
     </div>
 </template>

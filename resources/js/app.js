@@ -7,6 +7,7 @@ import { createApp, h } from "vue";
 import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
+import BaseDivider from "@/Components/BaseDivider.vue";
 
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
@@ -24,6 +25,7 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(pinia)
+            .component("BaseDivider", BaseDivider)
             .use(ZiggyVue, Ziggy)
             .mount(el);
     },
