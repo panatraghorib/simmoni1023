@@ -1,8 +1,8 @@
 <script setup>
 import { mdiLogout, mdiClose } from "@mdi/js";
 import { computed } from "vue";
-import AsideMenuList from "@/Components/AsideMenuList.vue";
-import AsideMenuItem from "@/Components/AsideMenuItem.vue";
+import AsideMenuList from "@/Components/AsideMenu/AsideMenuList.vue";
+import AsideMenuItem from "@/Components/AsideMenu/AsideMenuItem.vue";
 import BaseIcon from "@/Components/BaseIcon.vue";
 
 defineProps({
@@ -33,10 +33,10 @@ const asideLgCloseClick = (event) => {
 <template>
     <aside
         id="aside"
-        class="lg:py-2 lg:pl-1 w-60 fixed flex z-40 top-0 h-screen transition-position overflow-hidden"
+        class="lg:py-2 lg:pl-0 w-60 fixed flex z-40 top-0 h-screen transition-position overflow-hidden"
     >
         <div
-            class="aside lg:rounded-lg border-2 border-gray-50/20 flex-1 flex flex-col overflow-hidden dark:bg-slate-900"
+            class="aside lg:rounded-lg border border-gray-300 dark:rounded-l-none dark:border-l-0 dark:border-gray-50/20 flex-1 flex flex-col overflow-hidden bg-slate-50 dark:bg-slate-900"
         >
             <div
                 class="aside-brand flex flex-row h-14 items-center justify-between dark:bg-slate-900"

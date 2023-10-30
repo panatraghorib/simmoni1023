@@ -33,7 +33,7 @@ const componentClass = computed(() => {
         props.isModal ? "dark:bg-slate-900" : "dark:bg-slate-900/70",
         props.hasOutline
             ? "border dark:border-gray-100/20"
-            : "border border-gray-700",
+            : "border border-gray-300",
     ];
 
     if (props.isHoverable) {

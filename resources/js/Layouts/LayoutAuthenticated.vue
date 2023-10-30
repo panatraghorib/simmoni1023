@@ -1,14 +1,14 @@
 <script setup>
 import { mdiForwardburger, mdiBackburger, mdiMenu } from "@mdi/js";
 import { ref } from "vue";
-import menuAside from "@/menuAside.js";
 import menuNavBar from "@/menuNavBar.js";
+import NavBar from "@/Components/Navbar/NavBar.vue";
+import NavBarItemPlain from "@/Components/Navbar/NavBarItemPlain.vue";
 import { useDarkModeStore } from "@/Stores/darkMode.js";
 import BaseIcon from "@/Components/BaseIcon.vue";
 import FormControl from "@/Components/FormControl.vue";
-import NavBar from "@/Components/NavBar.vue";
-import NavBarItemPlain from "@/Components/NavBarItemPlain.vue";
-import AsideMenu from "@/Components/AsideMenu.vue";
+import menuAside from "@/menuAside.js";
+import AsideMenu from "@/Components/AsideMenu/AsideMenu.vue";
 import FooterBar from "@/Components/FooterBar.vue";
 
 const layoutAsidePadding = "xl:pl-60";
@@ -84,6 +84,7 @@ const menuClick = (event, item) => {
                         ctrl-k-focus
                         transparent
                         borderless
+                        class="border border-slate-200 rounded-md dark:border-slate-50/5 focus:border-slate-100"
                     />
                 </NavBarItemPlain>
             </NavBar>

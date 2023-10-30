@@ -42,21 +42,16 @@ export default [
                 label: "My Profile",
                 route: "profile.edit",
             },
-            {
-                icon: mdiCogOutline,
-                label: "Settings",
-            },
+            // {
+            //     icon: mdiCogOutline,
+            //     label: "Settings",
+            // },
             {
                 icon: mdiEmail,
                 label: "Messages",
             },
             {
                 isDivider: true,
-            },
-            {
-                icon: mdiLogout,
-                label: "Log Out",
-                isLogout: true,
             },
         ],
     },

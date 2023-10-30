@@ -1,14 +1,12 @@
 <script setup>
 import { mdiChevronUp, mdiChevronDown } from "@mdi/js";
 import { usePage } from "@inertiajs/vue3";
-// import { RouterLink } from 'vue-router'
 import { Link } from "@inertiajs/vue3";
 import { computed, ref, onMounted, onBeforeUnmount } from "vue";
-// import { useMainStore } from "@/stores/main.js";
 import BaseIcon from "@/Components/BaseIcon.vue";
 import UserAvatarCurrentUser from "@/Components/UserAvatarCurrentUser.vue";
-import NavBarMenuList from "@/Components/NavBarMenuList.vue";
-import BaseDivider from "@/Components/BaseDivider.vue";
+import NavBarMenuList from "@/Components/Navbar/NavBarMenuList.vue";
+// import { useMainStore } from "@/stores/main.js";
 
 const props = defineProps({
     item: {
@@ -133,7 +131,7 @@ onBeforeUnmount(() => {
         </div>
         <div
             v-if="item.menu"
-            class="text-sm border-b border-gray-100 lg:border lg:bg-white lg:absolute lg:top-full lg:left-0 lg:min-w-full lg:z-20 lg:rounded-lg lg:shadow-lg lg:dark:bg-slate-800 dark:border-slate-700"
+            class="text-sm lg:border lg:bg-white lg:absolute lg:top-full lg:left-0 lg:min-w-full lg:z-20 lg:rounded-lg lg:shadow-lg lg:dark:bg-slate-800 dark:border-slate-700"
             :class="{ 'lg:hidden': !isDropdownActive }"
         >
             <NavBarMenuList :menu="item.menu" @menu-click="menuClickDropdown" />

@@ -1,7 +1,12 @@
 <script setup>
 import { ref } from "vue";
 import { Head, useForm, usePage } from "@inertiajs/vue3";
-import { mdiBallotOutline, mdiAccount, mdiMail, mdiGithub } from "@mdi/js";
+import {
+    mdiBallotOutline,
+    mdiAccount,
+    mdiMail,
+    mdiMonitorDashboard,
+} from "@mdi/js";
 import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import SectionMain from "@/Components/SectionMain.vue";
 import CardBox from "@/Components/CardBox.vue";
@@ -55,9 +60,8 @@ const formStatusSubmit = () => {
                 title="Edit Profile"
             >
                 <BaseButton
-                    href="https://github.com/justboil/admin-one-vue-tailwind"
-                    target="_blank"
-                    :icon="mdiGithub"
+                    route-name="dashboard"
+                    :icon="mdiMonitorDashboard"
                     label="Back to Dashboard"
                     color="contrast"
                     rounded-full
