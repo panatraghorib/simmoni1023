@@ -3,6 +3,7 @@ export const gradientBgPurplePink = `${gradientBgBase} from-purple-400 via-pink-
 export const gradientBgDark = `${gradientBgBase} from-slate-700 via-slate-900 to-slate-800`;
 export const gradientBgPinkRed = `${gradientBgBase} from-pink-400 via-red-500 to-yellow-500`;
 export const gradientBgBlueRed = `${gradientBgBase} from-blue-400 via-red-500 to-yellow-500`;
+export const gradientBgBlueDark = `${gradientBgBase} from-blue-800 via-blue-900 to-blue-600`;
 
 export const colorsBgLight = {
     white: "bg-white text-black",

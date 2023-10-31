@@ -17,7 +17,7 @@ import FormFilePicker from "@/Components/FormFilePicker.vue";
 import BaseButton from "@/Components/BaseButton.vue";
 import BaseButtons from "@/Components/BaseButtons.vue";
 import UserCard from "@/Components/UserCard.vue";
-import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
+import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
 
 const mainStore = useMainStore();

@@ -5,7 +5,7 @@ import { Link } from "@inertiajs/vue3";
 import { mdiMinus, mdiPlus } from "@mdi/js";
 import { getButtonColor } from "@/colors.js";
 import BaseIcon from "@/Components/BaseIcon.vue";
-import AsideMenuList from "@/Components/AsideMenuList.vue";
+import AsideMenuList from "@/Components/AsideMenu/AsideMenuList.vue";
 import { useDarkModeStore } from "@/Stores/darkMode.js";
 
 const props = defineProps({
@@ -21,19 +21,26 @@ const itemHref = computed(() =>
 );
 
 const darkModeStore = useDarkModeStore();
+
+const asideMenuItemActiveStyle = computed(() =>
+    hasColor.value ? "" : "aside-menu-item-active font-medium"
+);
+
 const activeInactiveStyle = computed(() =>
     props.item.route && route().current(props.item.route)
-        ? darkModeStore.asideMenuItemActiveStyle
-        : ""
+        ? "font-medium text-white"
+        : "text-gray-600 dark:text-gray-300"
+);
+
+const activeInactiveLiStyle = computed(() =>
+    props.item.route && route().current(props.item.route)
+        ? "border-t border-b border-l text-white font-medium border-slate-300/30 bg-gray-400 mb-1 rounded-l-lg dark:bg-blue-700"
+        : "font-normal"
 );
 
 const emit = defineEmits(["menu-click"]);
 
 const hasColor = computed(() => props.item && props.item.color);
-
-const asideMenuItemActiveStyle = computed(() =>
-    hasColor.value ? "" : "aside-menu-item-active font-bold"
-);
 
 const isDropdownActive = ref(false);
 
@@ -56,7 +63,7 @@ const menuClick = (event) => {
 </script>
 
 <template>
-    <li>
+    <li :class="activeInactiveLiStyle" class="ml-1">
         <component
             :is="item.route ? Link : 'a'"
             :href="itemHref"
@@ -75,7 +82,11 @@ const menuClick = (event) => {
             />
             <span
                 class="grow text-ellipsis line-clamp-1"
-                :class="[{ 'pr-12': !hasDropdown }, activeInactiveStyle]"
+                :class="[
+                    { 'pr-12': !hasDropdown },
+                    activeInactiveStyle,
+                    asideMenuItemActiveStyle,
+                ]"
                 >{{ item.label }}</span
             >
             <BaseIcon

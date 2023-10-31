@@ -41,13 +41,13 @@ const updatePassword = () => {
     <section class="mt-4">
         <CardBox is-form has-outline @submit.prevent="updatePassword">
             <header>
-                <h2 class="text-lg font-medium text-gray-900">
-                    Update Password
+                <h2 class="text-lg font-medium text-blue-700">
+                    Pengubahan Kata Sandi
                 </h2>
 
-                <p class="mt-1 mb-3 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay
-                    secure.
+                <p class="mt-1 mb-3 text-sm text-gray-500">
+                    Pastikan akun Anda menggunakan kata sandi yang panjang dan
+                    acak agar tetap aman.
                 </p>
             </header>
             <FormField label="Kata sandi lama">
@@ -86,7 +86,7 @@ const updatePassword = () => {
                 <BaseButtons>
                     <BaseButton
                         type="submit"
-                        color="info"
+                        color="success"
                         label="Submit"
                         roundedFull
                         small
@@ -94,7 +94,7 @@ const updatePassword = () => {
                     />
                     <BaseButton
                         type="reset"
-                        color="info"
+                        color="success"
                         outline
                         label="Reset"
                         roundedFull

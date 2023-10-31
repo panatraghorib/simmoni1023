@@ -1,77 +1,98 @@
 <script setup>
-import { mdiUpload } from '@mdi/js'
-import { computed, ref, watch } from 'vue'
-import BaseButton from '@/components/BaseButton.vue'
+import { mdiUpload } from "@mdi/js";
+import { computed, ref, watch } from "vue";
+import BaseButton from "@/Components/BaseButton.vue";
+import DefaultAvatar from "/public/img/user-avatar.png";
 
 const props = defineProps({
-  modelValue: {
-    type: [Object, File, Array],
-    default: null
-  },
-  label: {
-    type: String,
-    default: null
-  },
-  icon: {
-    type: String,
-    default: mdiUpload
-  },
-  accept: {
-    type: String,
-    default: null
-  },
-  color: {
-    type: String,
-    default: 'info'
-  },
-  isRoundIcon: Boolean
-})
+    modelValue: {
+        type: [Object, File, Array, String],
+        default: null,
+    },
+    label: {
+        type: String,
+        default: null,
+    },
+    icon: {
+        type: String,
+        default: mdiUpload,
+    },
+    accept: {
+        type: String,
+        default: null,
+    },
+    color: {
+        type: String,
+        default: "info",
+    },
+    isRoundIcon: Boolean,
+    small: Boolean,
+    preview: Boolean,
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
-const root = ref(null)
+const root = ref(null);
 
-const file = ref(props.modelValue)
+const file = ref(props.modelValue);
 
-const showFilename = computed(() => !props.isRoundIcon && file.value)
+const showFilename = computed(() => !props.isRoundIcon && file.value);
 
-const modelValueProp = computed(() => props.modelValue)
+const modelValueProp = computed(() => props.modelValue);
 
 watch(modelValueProp, (value) => {
-  file.value = value
+    file.value = value;
 
-  if (!value) {
-    root.value.input.value = null
-  }
-})
+    if (!value) {
+        root.value.input.value = null;
+    }
+});
+
+const showFilePreview = computed(() => props.preview && !file.value);
+
+const filePreview = ref(null);
+// const image = reactive({
+//     preview: null,
+// });
 
 const upload = (event) => {
-  const value = event.target.files || event.dataTransfer.files
+    const value = event.target.files || event.dataTransfer.files;
 
-  file.value = value[0]
+    file.value = value[0];
 
-  emit('update:modelValue', file.value)
+    if (props.preview) {
+        var input = event.target;
+        if (input.files) {
+            var reader = new FileReader();
+            reader.onload = (e) => {
+                filePreview.value = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 
-  // Use this as an example for handling file uploads
-  // let formData = new FormData()
-  // formData.append('file', file.value)
+    emit("update:modelValue", file.value);
 
-  // const mediaStoreRoute = `/your-route/`
+    // Use this as an example for handling file uploads
+    // let formData = new FormData()
+    // formData.append('file', file.value)
 
-  // axios
-  //   .post(mediaStoreRoute, formData, {
-  //     headers: {
-  //       'Content-Type': 'multipart/form-data'
-  //     },
-  //     onUploadProgress: progressEvent
-  //   })
-  //   .then(r => {
-  //
-  //   })
-  //   .catch(err => {
-  //
-  //   })
-}
+    // const mediaStoreRoute = `/your-route/`
+
+    // axios
+    //   .post(mediaStoreRoute, formData, {
+    //     headers: {
+    //       'Content-Type': 'multipart/form-data'
+    //     },
+    //     onUploadProgress: progressEvent
+    //   })
+    //   .then(r => {
+    //
+    //   })
+    //   .catch(err => {
+    //
+    //   })
+};
 
 // const uploadPercent = ref(0)
 //
@@ -83,32 +104,56 @@ const upload = (event) => {
 </script>
 
 <template>
-  <div class="flex items-stretch justify-start relative">
-    <label class="inline-flex">
-      <BaseButton
-        as="a"
-        :class="{ 'w-12 h-12': isRoundIcon, 'rounded-r-none': showFilename }"
-        :icon-size="isRoundIcon ? 24 : undefined"
-        :label="isRoundIcon ? null : label"
-        :icon="icon"
-        :color="color"
-        :rounded-full="isRoundIcon"
-      />
-      <input
-        ref="root"
-        type="file"
-        class="absolute top-0 left-0 w-full h-full opacity-0 outline-none cursor-pointer -z-1"
-        :accept="accept"
-        @input="upload"
-      />
-    </label>
-    <div
-      v-if="showFilename"
-      class="px-4 py-2 bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 border rounded-r"
-    >
-      <span class="text-ellipsis line-clamp-1">
-        {{ file.name }}
-      </span>
+    <div class="flex items-stretch justify-start relative">
+        <div
+            class="flex flex-col w-40 items-center justify-center bg-slate-100 p-2 dark:bg-slate-700 rounded-sm"
+        >
+            <div
+                class="inline-flex w-full h-36 rounded-lg bg-slate-200 p-3 mb-5 dark:bg-slate-500 items-center justify-center"
+            >
+                <img
+                    :src="[
+                        typeof modelValue === 'string' && modelValue !== null
+                            ? modelValue
+                            : filePreview
+                            ? filePreview
+                            : DefaultAvatar,
+                    ]"
+                    class="w-full h-full rounded-md"
+                    alt="File Preview"
+                />
+            </div>
+            <label class="inline-flex">
+                <BaseButton
+                    as="a"
+                    :class="{
+                        'w-12 h-12': isRoundIcon,
+                        'rounded-r-none': showFilename,
+                    }"
+                    :icon-size="isRoundIcon ? 24 : undefined"
+                    :label="isRoundIcon ? null : label"
+                    :icon="icon"
+                    :color="color"
+                    :rounded-full="isRoundIcon"
+                    :small="small"
+                />
+                <input
+                    ref="root"
+                    type="file"
+                    class="absolute top-0 left-0 w-full h-full opacity-0 outline-none cursor-pointer -z-1"
+                    :accept="accept"
+                    @input="upload"
+                />
+            </label>
+        </div>
+
+        <div
+            v-if="showFilename"
+            class="px-4 py-2 bg-gray-100 dark:bg-slate-800 border-gray-200 dark:border-slate-700 border rounded-r"
+        >
+            <span class="text-ellipsis line-clamp-1">
+                {{ file.name }}
+            </span>
+        </div>
     </div>
-  </div>
 </template>

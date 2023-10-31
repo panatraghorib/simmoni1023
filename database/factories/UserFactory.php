@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -20,10 +21,17 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'username' => fake()->userName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => Hash::make('12345678'), // password
+            'password' => Hash::make('12345678'),
             'remember_token' => Str::random(10),
+            'organization_id' => 1,
+            'mobile' => fake()->phoneNumber(),
+            'gender' => $this->faker->randomElement(['Laki-Laki', 'Perempuan']),
+            'created_at' => now(),
+            'date_of_birth' => fake()->date(),
+            'avatar' => 'img/default-avatar.jpg'
         ];
     }
 
@@ -36,4 +44,25 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    // /**
+    //  * @param array|\Spatie\Permission\Contracts\Role|string  ...$roles
+    //  * @return UserFactory
+    //  */
+
+    // private function assignRole(...$roles): UserFactory
+    // {
+    //     return $this->afterCreating(fn (User $user) => $user->syncRoles($roles));
+    // }
+    // /**
+    //  * Configure the model factory.
+    //  *
+    //  * @return $this
+    //  */
+    // public function configure()
+    // {
+    //     return $this->afterMaking(function (User $user) {
+    //         return $user->assignRole('Organisasi/Cabor');
+    //     });
+    // }
 }
