@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from "vue";
-import { Head, useForm, router, usePage } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
+import { Head, useForm, Link, usePage } from "@inertiajs/vue3";
 import {
     mdiBallotOutline,
     mdiAccount,
@@ -8,9 +8,9 @@ import {
     mdiArrowLeftCircle,
     mdiMail,
 } from "@mdi/js";
+
 import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import CardBox from "@/Components/CardBox.vue";
-
 import BaseButton from "@/Components/BaseButton.vue";
 import SectionMain from "@/Components/SectionMain.vue";
 import FormFilePicker from "@/Components/FormFilePicker.vue";
@@ -23,53 +23,57 @@ import FormCheckRadioGroup from "@/Components/FormCheckRadioGroup.vue";
 
 const data = defineProps({ roles: Object, cabor: Object });
 
-const namaLengkap = ref(null);
+// const namaLengkap = ref(null);
 
 const user = usePage().props.user;
+
 const form = useForm({
-    username: "vella_dar",
-    email: "vela.dar@gmail.com",
-    name: "Vella Darpa",
-    password: "12345678",
-    password_confirmation: "12345678",
-    mobile: "085327889876",
-    dateOfBirth: "10/05/1993",
-    gender: "",
-    avatar: null,
-    roles: "",
-    cabor: "",
+    _method: "put",
+    id: user.id,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    password: "",
+    password_confirmation: "",
+    mobile: user.mobile,
+    dateOfBirth: user.date_of_birth,
+    gender: user.gender,
+    avatar: user.avatar,
+    roles: user.roles,
+    cabor: user.organization_id,
 });
 
+const hasCabor = ref(false);
 const onRoleChange = (role) => {
-    if (form.roles && form.roles.id !== 3) {
-        form.cabor = "";
+    if (role == 3) {
+        form.cabor = null;
+        hasCabor.value = true;
+    } else {
+        hasCabor.value = false;
     }
 };
 
 function submit() {
-    form.post(route("user.store"), {
-        preserveScroll: true,
-        onSuccess: () => form.reset(),
-        onError: () => {
-            // if (form.errors.name) {
-            //     form.reset("name");
-            //     namaLengkap.value.focus();
-            // }
-            // if (form.errors.username) {
-            //     form.reset("username");
-            // }
-        },
-    });
+    // form.post(`/users/update/${user.id}`, {
+    //     preserveScroll: true,
+    //     onSuccess: () => form.reset(),
+    // });
+
+    form.transform((data) => ({
+        ...data,
+        roles: data.roles !== null ? [data.roles] : "",
+    })).post(`/users/update/${user.id}`);
 }
 </script>
 
 <template>
     <LayoutAuthenticated>
-        <Head title="Create User" />
+        <Head :title="`${form.name} ${form.username}`" />
+
         <SectionMain>
             <SectionTitleLineWithButton
                 :icon="mdiAccountMultiplePlusOutline"
-                title="User Baru"
+                title="Edit Pengguna"
             >
                 <BaseButton
                     route-name="user.index"
@@ -81,8 +85,27 @@ function submit() {
                 />
             </SectionTitleLineWithButton>
 
-            <CardBox form @submit.prevent="submit" is-form>
-                {{ user }}
+            <div class="flex justify-start mb-3 max-w-3xl">
+                <h3 class="text-xl font-bold">
+                    <Link
+                        class="text-indigo-400 hover:text-indigo-600"
+                        href="/users"
+                        >Users</Link
+                    >
+                    <span class="text-indigo-400 font-medium">/</span>
+                    {{ form.name }}
+                    <span class="text-sm text-blue-700 dark:text-red-400">
+                        (@{{ form.username }})
+                    </span>
+                </h3>
+                <img
+                    v-if="user.avatar"
+                    class="block ml-4 w-8 h-8 rounded-full border border-gray-300 shadow dark:border-gray-600/70"
+                    :src="user.avatar"
+                />
+            </div>
+
+            <CardBox @submit.prevent="submit" is-form>
                 <FormField label="Nama Lengkap">
                     <FormControl
                         v-model="form.name"
@@ -149,8 +172,8 @@ function submit() {
                     <FormControl
                         v-model="form.gender"
                         :options="[
-                            { id: 1, label: 'Laki-Laki' },
-                            { id: 2, label: 'Perempuan' },
+                            { id: 'Laki-Laki', label: 'Laki-Laki' },
+                            { id: 'Perempuan', label: 'Perempuan' },
                         ]"
                         name="Jenis Kelamin"
                         :error="form.errors.gender"
@@ -169,16 +192,17 @@ function submit() {
                 </FormField>
 
                 <BaseDivider />
-                <FormField label="Hak Akses">
+                <FormField label="Instansi">
                     <FormControl
                         v-model="form.roles"
                         :options="data.roles"
                         name="hak akses"
                         :error="form.errors.roles"
-                        @change="onRoleChange"
+                        @change="onRoleChange($event.target.value)"
                     />
                 </FormField>
-                <div v-if="form.roles && form.roles.id == 3">
+
+                <div v-if="hasCabor">
                     <FormField label="Organisasi/Cabor">
                         <FormControl
                             v-model="form.cabor"

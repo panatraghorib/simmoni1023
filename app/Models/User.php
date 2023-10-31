@@ -74,4 +74,4 @@ class User extends Authenticatable
             // fn ($value) => Carbon::createFromFormat('d/m/Y', $value)->format('Y-m-d')
         );
     }
-}
+

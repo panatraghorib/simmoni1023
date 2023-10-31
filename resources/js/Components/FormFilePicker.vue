@@ -6,7 +6,7 @@ import DefaultAvatar from "/public/img/user-avatar.png";
 
 const props = defineProps({
     modelValue: {
-        type: [Object, File, Array],
+        type: [Object, File, Array, String],
         default: null,
     },
     label: {
@@ -112,7 +112,13 @@ const upload = (event) => {
                 class="inline-flex w-full h-36 rounded-lg bg-slate-200 p-3 mb-5 dark:bg-slate-500 items-center justify-center"
             >
                 <img
-                    :src="[filePreview ? filePreview : DefaultAvatar]"
+                    :src="[
+                        typeof modelValue === 'string' && modelValue !== null
+                            ? modelValue
+                            : filePreview
+                            ? filePreview
+                            : DefaultAvatar,
+                    ]"
                     class="w-full h-full rounded-md"
                     alt="File Preview"
                 />

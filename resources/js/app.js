@@ -8,6 +8,7 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import BaseDivider from "@/Components/BaseDivider.vue";
+import FormDatePicker from "@/Components/FormDatePicker.vue";
 
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
@@ -26,6 +27,7 @@ createInertiaApp({
             .use(plugin)
             .use(pinia)
             .component("BaseDivider", BaseDivider)
+            .component("DatePicker", FormDatePicker)
             .use(ZiggyVue, Ziggy)
             .mount(el);
     },
