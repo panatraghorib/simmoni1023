@@ -98,7 +98,6 @@ onMounted(() => {
             :uid="id"
             :dark="darkModeStore.isEnabled"
             :enableTimePicker="enableTimePicker"
-            preview-format="dd/MM/yyyy"
             format="dd/MM/yyyy"
             :inputClassName="`h-10 text-sm border border-gray-400 dark:bg-slate-800 dark:border-slate-50/70`"
             auto-apply
