@@ -20,8 +20,9 @@ import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
 import BaseIcon from "@/Components/BaseIcon.vue";
 import NotificationBarInCard from "@/Components/NotificationBarInCard.vue";
-import CardBoxModal from "@/components/CardBoxModal.vue";
-import CardBoxComponentTitle from "@/components/CardBoxComponentTitle.vue";
+import CardBoxModal from "@/Components/CardBoxModal.vue";
+import CardBoxComponentTitle from "@/Components/CardBoxComponentTitle.vue";
+import Swal from "sweetalert2";
 
 defineProps(["users"]);
 const formStatusWithHeader = ref(true);
@@ -36,6 +37,52 @@ setTranslations({
 });
 
 const modalOneActive = ref(false);
+
+const confirmingUserDeletion = ref(false);
+const confirmUserDeletion = () => {
+    confirmingUserDeletion.value = true;
+
+    // nextTick(() => passwordInput.value.focus());
+};
+
+const confirmDelete = () => {
+    const swalButtons = Swal.mixin({
+        customClass: {
+            confirmButton:
+                "text-gray-900 bg-red-400 w-32 border border-gray-300 focus:outline-none hover:bg-red-800  hover:text-white focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700",
+            cancelButton:
+                "text-gray-900 bg-purple-200 w-32 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700",
+        },
+        buttonsStyling: false,
+    });
+    swalButtons
+        .fire({
+            title: "Do you want to Delete item?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: `Batal`,
+            // showDenyButton: true,
+            // denyButtonText: `No`,
+        })
+        .then((result) => {
+            // console.log(result);
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                console.lgo("itemDeleted");
+                swalButtons.fire("Deleted!", "", "success");
+            } else if (
+                /* Read more about handling dismissals below */
+                result.dismiss === swalButtons.DismissReason.cancel
+            ) {
+                swalButtons.fire(
+                    "Cancelled",
+                    "Your imaginary file is safe :)",
+                    "error"
+                );
+            }
+        });
+    console.log("delete");
+};
 </script>
 
 <template>
@@ -44,7 +91,7 @@ const modalOneActive = ref(false);
         <CardBoxModal
             v-model="modalOneActive"
             title="Please confirm action"
-            button-label="Confirm"
+            button-label="Confirmx"
             has-cancel
         >
             <p>This is sample modal</p>
@@ -136,23 +183,14 @@ const modalOneActive = ref(false);
                 <CardBox
                     class="cursor-pointer md:w-7/12 lg:w-5/12 shadow-2xl md:mx-auto"
                     is-hoverable
-                    @click="modalOneActive = true"
                 >
-                    <CardBoxComponentTitle title="Please confirm action">
-                        <BaseButton
-                            :icon="mdiClose"
-                            color="whiteDark"
-                            small
-                            rounded-full
-                        />
-                    </CardBoxComponentTitle>
-                    <div class="space-y-3">
-                        <p>Click to see in action</p>
-                    </div>
-
                     <template #footer>
                         <BaseButtons>
-                            <BaseButton label="Confirm" color="info" />
+                            <BaseButton
+                                label="Confirm"
+                                color="info"
+                                @click="modalOneActive = true"
+                            />
                             <BaseButton label="Cancel" color="info" outline />
                         </BaseButtons>
                     </template>
@@ -200,12 +238,15 @@ const modalOneActive = ref(false);
                             small
                         />
 
-                        <a
-                            :href="`/users/${user.id}/edit`"
-                            class="p-2 bg-red-600 text-white rounded"
-                        >
-                            Hapus
-                        </a>
+                        <BaseButton
+                            as="button"
+                            color="bg-red-700"
+                            label="Hapus"
+                            class="text-white"
+                            :icon="mdiPlusCircleMultipleOutline"
+                            small
+                            @click="confirmDelete"
+                        />
                     </template>
 
                     <!-- <template #sort>
