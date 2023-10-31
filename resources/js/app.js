@@ -10,9 +10,50 @@ import { ZiggyVue } from "../../vendor/tightenco/ziggy/dist/vue.m";
 import BaseDivider from "@/Components/BaseDivider.vue";
 import FormDatePicker from "@/Components/FormDatePicker.vue";
 
+import "vue-toastification/dist/index.css";
+import "sweetalert2/dist/sweetalert2.min.css";
+
+import Toast, { TYPE } from "vue-toastification";
+
 const appName =
     window.document.getElementsByTagName("title")[0]?.innerText || "Laravel";
 
+const toastOptions = {
+    toastDefaults: {
+        // ToastOptions object for each type of toast
+        [TYPE.ERROR]: {
+            timeout: 10000,
+            closeButton: false,
+        },
+        [TYPE.SUCCESS]: {
+            timeout: 3000,
+            hideProgressBar: true,
+        },
+    },
+    position: "top-center",
+    timeout: 5000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: true,
+    hideProgressBar: true,
+    closeButton: "button",
+    icon: true,
+    rtl: false,
+    transition: "Vue-Toastification__fade",
+    maxToasts: 20,
+    newestOnTop: true,
+    filterBeforeCreate: (toast, toasts) => {
+        if (toasts.filter((t) => t.type === toast.type).length !== 0) {
+            // Returning false discards the toast
+            return false;
+        }
+        // You can modify the toast if you want
+        return toast;
+    },
+};
 const pinia = createPinia();
 
 createInertiaApp({
@@ -26,8 +67,9 @@ createInertiaApp({
         return createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(pinia)
-            .component("BaseDivider", BaseDivider)
+            .use(Toast, toastOptions)
             .component("DatePicker", FormDatePicker)
+            .component("BaseDivider", BaseDivider)
             .use(ZiggyVue, Ziggy)
             .mount(el);
     },

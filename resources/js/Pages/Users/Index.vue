@@ -1,6 +1,7 @@
 <script setup>
-import { ref } from "vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { ref, computed, watch } from "vue";
+import { Head, Link, router, usePage } from "@inertiajs/vue3";
+import Swal from "sweetalert2";
 import CardBox from "@/Components/CardBox.vue";
 import {
     Table,
@@ -11,7 +12,7 @@ import {
     mdiAccountGroup,
     mdiFileSearch,
     mdiPlusCircleMultipleOutline,
-    mdiClose,
+    mdiDeleteCircleOutline,
 } from "@mdi/js";
 import SectionMain from "@/Components/SectionMain.vue";
 import BaseButton from "@/Components/BaseButton.vue";
@@ -20,42 +21,129 @@ import LayoutAuthenticated from "@/Layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/Components/SectionTitleLineWithButton.vue";
 import BaseIcon from "@/Components/BaseIcon.vue";
 import NotificationBarInCard from "@/Components/NotificationBarInCard.vue";
-import CardBoxModal from "@/components/CardBoxModal.vue";
-import CardBoxComponentTitle from "@/components/CardBoxComponentTitle.vue";
+import ToastNotification from "@/Components/ToastNotification.vue";
+import DeleteModal from "@/Components/DeleteModal.vue";
+import { useToast, TYPE } from "vue-toastification";
 
 defineProps(["users"]);
+
 const formStatusWithHeader = ref(true);
 setTranslations({
     next: "Next",
     no_results_found: "No results found",
-    per_page: "per page",
+    per_page: "/page",
     previous: "Prev",
     results: "",
     of: "",
     to: "",
 });
 
-const modalOneActive = ref(false);
+const page = usePage();
+const toast = useToast();
+
+// console.log(usePage().props.flash);
+watch(
+    () => usePage().props.flash,
+    (flash) => {
+        console.log(flash.message.type);
+        let toastId = null;
+
+        switch (flash.message.type) {
+            case "success":
+                toastId = toast({
+                    component: ToastNotification,
+                    props: { type: TYPE.SUCCESS, title: flash.message.text },
+                });
+                break;
+            case "error":
+                toastId = toast({
+                    component: ToastNotification,
+                    props: { type: TYPE.ERROR, title: flash.message.text },
+                });
+                break;
+            default:
+                toastId = toast({
+                    component: ToastNotification,
+                    props: { type: TYPE.DEFAULT, title: flash.message.text },
+                });
+                break;
+        }
+
+        // if (flash.message.type.default) {
+        //     toastId = toast({
+        //         component: ToastNotification,
+        //         props: { type: TYPE.DEFAULT, title: flash.message.text },
+        //     });
+        // }
+        // if (flash.message.type.success) {
+        //     toastId = toast({
+        //         component: ToastNotification,
+        //         props: { type: TYPE.SUCCESS, title: flash.message.text },
+        //     });
+        // }
+        // if (flash.message.type.error) {
+        //     toastId = toast({
+        //         component: ToastNotification,
+        //         props: { type: TYPE.ERROR, title: flash.message.text },
+        //     });
+        // }
+
+        if (toastId !== null) {
+            setTimeout(() => toast.dismiss(toastId), 5000);
+        }
+    },
+    { deep: true }
+);
+
+const confirmDeleteModal = ref(false);
+
+const confirmDelete = (id) => {
+    const swalButtons = Swal.mixin({
+        customClass: {
+            confirmButton:
+                "text-gray-900 w-28 bg-red-400 border border-gray-300 focus:outline-none hover:bg-red-700 hover:text-white focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700",
+            cancelButton:
+                "text-gray-900 w-28 bg-gray-300 border border-gray-300 focus:outline-none hover:bg-gray-400 hover:text-white focus:ring-1 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700",
+        },
+        buttonsStyling: false,
+    });
+    swalButtons
+        .fire({
+            title: "Do you want to Delete user?",
+            showCancelButton: true,
+            confirmButtonText: "Ya",
+            cancelButtonText: `Batal`,
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                router.delete(`users/delete/${id}`);
+                // swalButtons.fire("Deleted!", "", "success");
+            }
+            // else if (
+            //     /* Read more about handling dismissals below */
+            //     result.dismiss === swalButtons.DismissReason.cancel
+            // ) {
+            //     swalButtons.fire(
+            //         "Cancelled",
+            //         "Your imaginary file is safe :)",
+            //         "error"
+            //     );
+            // }
+        });
+};
 </script>
 
 <template>
     <LayoutAuthenticated>
         <Head title="Users" />
-        <CardBoxModal
-            v-model="modalOneActive"
-            title="Please confirm action"
-            button-label="Confirm"
-            has-cancel
-        >
-            <p>This is sample modal</p>
-            <p>Lorem ipsum dolor</p>
-        </CardBoxModal>
 
         <SectionMain>
             <SectionTitleLineWithButton
                 :icon="mdiAccountGroup"
                 title="Pengguna"
             />
+
+            <div v-if="$page.props.toast">dd</div>
 
             <NotificationBarInCard
                 v-if="$page.props.flash.message"
@@ -133,31 +221,6 @@ const modalOneActive = ref(false);
                     </template>
                 </Table> -->
 
-                <CardBox
-                    class="cursor-pointer md:w-7/12 lg:w-5/12 shadow-2xl md:mx-auto"
-                    is-hoverable
-                    @click="modalOneActive = true"
-                >
-                    <CardBoxComponentTitle title="Please confirm action">
-                        <BaseButton
-                            :icon="mdiClose"
-                            color="whiteDark"
-                            small
-                            rounded-full
-                        />
-                    </CardBoxComponentTitle>
-                    <div class="space-y-3">
-                        <p>Click to see in action</p>
-                    </div>
-
-                    <template #footer>
-                        <BaseButtons>
-                            <BaseButton label="Confirm" color="info" />
-                            <BaseButton label="Cancel" color="info" outline />
-                        </BaseButtons>
-                    </template>
-                </CardBox>
-
                 <Table
                     :resource="users"
                     :striped="true"
@@ -199,13 +262,15 @@ const modalOneActive = ref(false);
                             :icon="mdiPlusCircleMultipleOutline"
                             small
                         />
-
-                        <a
-                            :href="`/users/${user.id}/edit`"
-                            class="p-2 bg-red-600 text-white rounded"
-                        >
-                            Hapus
-                        </a>
+                        <BaseButton
+                            as="button"
+                            color="bg-red-600"
+                            label="Hapus"
+                            class="text-white"
+                            :icon="mdiDeleteCircleOutline"
+                            small
+                            @click="confirmDelete(user.id)"
+                        />
                     </template>
 
                     <!-- <template #sort>

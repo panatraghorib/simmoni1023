@@ -2,25 +2,18 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\UserAddRequest;
 use App\Http\Requests\UserUpdateRequest;
-
+use App\Models\Cabor;
 use App\Models\Role;
 use App\Models\User;
-use Inertia\Inertia;
-use App\Models\Cabor;
-use Inertia\Response;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
 use Inertia\Response;
-
 use ProtoneMedia\LaravelQueryBuilderInertiaJs\InertiaTable;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -46,7 +39,7 @@ class UserController extends Controller
         $numberPaginate = request('perPage') ?? 10;
 
         $users = QueryBuilder::for(User::class)
-            ->defaultSort('name')
+            ->defaultSort('id')
             ->allowedSorts(['name', 'email'])
             ->allowedFilters(['name', 'email', $globalSearch])
             ->paginate($numberPaginate)
@@ -60,10 +53,10 @@ class UserController extends Controller
             function (InertiaTable $table) {
                 $table
                     ->withGlobalSearch()
-                    ->defaultSort('name')
+                    ->defaultSort('id')
                     ->column(key: 'name', searchable: true, sortable: true, canBeHidden: true, label: 'nama')
                     ->column(key: 'email', searchable: true, sortable: true)
-                    ->column(key: 'email_verified_at',  label: 'Bergabung')
+                    ->column(key: 'email_verified_at', label: 'Bergabung')
                     ->column(label: 'Actions');
             }
         );
@@ -122,8 +115,8 @@ class UserController extends Controller
         DB::rollBack();
 
         return redirect()->route('user.index')->with('message', [
-            'type'   => 'success',
-            'text'   => 'User berhasil ditambahkan!'
+            'type' => 'success',
+            'text' => 'User berhasil ditambahkan!',
         ]);
     }
 
@@ -163,7 +156,7 @@ class UserController extends Controller
             ]),
             'cabor' => Cabor::all()->map(fn ($cabor) => [
                 'id' => $cabor->id,
-                'label' => $cabor->cabor_name
+                'label' => $cabor->cabor_name,
             ]),
         ]);
     }
@@ -173,7 +166,9 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-    
+        // dump($request->all());
+        // exit;
+
         $user->update($request->only(
             'email',
             'username',
@@ -191,6 +186,13 @@ class UserController extends Controller
             $user->update(['password' => $request->get('password')]);
         }
 
+        activity('User')
+            ->causedBy(auth()->user()->id ?? null)
+            ->withProperties(['attributes' => $user])
+            ->performedOn($user)
+            ->event('created')
+            ->log('User with Email' . $user->email . ' has been updated');
+
         // return redirect()->back()->with('success', 'User updated.');
         return redirect()->route('user.index')->with('message', [
             'type' => 'success',
@@ -201,8 +203,27 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+
+        if (auth()->user()->id == $user->id || $user->id == 1 || $user->hasRole('Superadmin')) {
+            return redirect()->route('user.index')->with('message', [
+                'type' => 'danger',
+                'text' => 'You cannot delete your self!',
+            ]);
+        }
+        $user->delete();
+
+        activity('User')
+            ->causedBy(auth()->user()->id ?? null)
+            ->withProperties(['attributes' => $user])
+            ->performedOn($user)
+            ->event('created')
+            ->log('User with Email' . $user->email . ' has been deleted');
+
+        return redirect()->route('user.index')->with('message', [
+            'type' => 'error',
+            'text' => 'User telah dihapus!',
+        ]);
     }
 }

@@ -35,14 +35,12 @@ Route::middleware('auth')->group(function () {
     #USERS ROUTES
     Route::group(['prefix' => 'users'], function () {
         // Route::resource('users', UserController::class);
-
         Route::get('/', [UserController::class, 'index'])->name('user.index');
         Route::get('create', [UserController::class, 'create'])->name('user.create');
         Route::post('store', [UserController::class, 'store'])->name('user.store');
-        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('user.edit');
-        Route::put('/update/{user}', [UserController::class, 'update'])->name('user.update');
-
-        Route::delete('delete', [UserController::class, 'delete'])->name('user.delete');
+        Route::get('{user}/edit', [UserController::class, 'edit'])->name('user.edit');
+        Route::put('update/{user}', [UserController::class, 'update'])->name('user.update');
+        Route::delete('delete/{user}', [UserController::class, 'destroy'])->name('user.delete');
     });
 });
 
